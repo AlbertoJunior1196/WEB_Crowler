@@ -83,7 +83,7 @@ async function scrawlData(){
     sendDataHouses(preparar_houses(json_houses)); 
 }
 async function sentDataBook(arr_books){
-    const response = await fetch('http://localhost:9000/books', {
+    const response = await fetch('http://host.docker.internal:9000/books', {
     method: 'POST',
     body:JSON.stringify(arr_books), // string or object
     headers: {
@@ -94,7 +94,7 @@ async function sentDataBook(arr_books){
   console.log(response);
 }
 async function sendDataHouses(arr_houses){
-    const response = await fetch('http://localhost:9000/houses', {
+    const response = await fetch('http://host.docker.internal:9000/houses', {
     method: 'POST',
     body:JSON.stringify(arr_houses), // string or object
     headers: {
@@ -103,7 +103,7 @@ async function sendDataHouses(arr_houses){
   });
 }
 async function sendDataCharacters(arr_characters){
-    const response = await fetch('http://localhost:9000/characters', {
+    const response = await fetch('http://host.docker.internal:9000/characters', {
     method: 'POST',
     body:JSON.stringify(arr_characters), // string or object
     headers: {
