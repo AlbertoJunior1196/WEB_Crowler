@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-   "webcrawler": "nodemon server.js"
+   "webcrawler": "node server.js"
   },
   "keywords": [],
   "author": "",
