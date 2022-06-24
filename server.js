@@ -66,24 +66,75 @@ function preparar_houses(data){
     });
     console.log(arr_houses)
     return arr_houses;
+}
+async function obterTodosLivros(url){
+    var Todos=[];
+    var data=[];
+    var pagina=0;
+    var busca=true;
+    while(busca){
+        const dados= await fetch(url+`?page=${pagina.toString()}&pageSize=50`);
+        data=await dados.json();
+        console.log(data);
+        if(data.length>0)
+            sentDataBook(preparar_books(data));
+        Todos=Todos.concat(data);
+        pagina++;
+        console.log(pagina)
+        if(data.length==0){
+            busca=false;
+        }
+    }
+    return Todos;
+} 
+async function obterTodosHouses(url){
+    var Todos=[];
+    var data=[];
+    var pagina=0;
+    var busca=true;
+    while(busca){
+        const dados= await fetch(url+`?page=${pagina.toString()}&pageSize=50`);
+        data=await dados.json();
+        console.log(data);
+        if(data.length>0)
+            sendDataHouses(preparar_houses(data));
+        Todos=Todos.concat(data);
+        pagina++;
+        console.log(pagina)
+        if(data.length==0){
+            busca=false;
+        }
+    }
+    return Todos;
+} 
+async function obterTodoscharacters(url){
+    var Todos=[];
+    var data=[];
+    var pagina=0;
+    var busca=true;
+    while(busca){
+        const dados= await fetch(url+`?page=${pagina.toString()}&pageSize=50`);
+        data=await dados.json();
+        console.log(data);
+        if(data.length>0)
+            sendDataCharacters(preparar_characters(data));
+        Todos=Todos.concat(data);
+        pagina++;
+        console.log(pagina)
+        if(data.length==0){
+            busca=false;
+        }
+    }
+    return Todos;
 } 
 async function scrawlData(){
-    const data_books= await fetch('https://www.anapioficeandfire.com/api/books');
-    const json_books=await data_books.json();
-    const data_characters= await fetch('https://www.anapioficeandfire.com/api/characters');
-    const json_characters=await data_characters.json();
-    const data_houses= await fetch('https://www.anapioficeandfire.com/api/houses');
-    const json_houses=await data_houses.json();
+    const json_books= obterTodosLivros('https://www.anapioficeandfire.com/api/books');
+    const json_characters=obterTodoscharacters('https://www.anapioficeandfire.com/api/characters');
+    const json_houses= obterTodosHouses('https://www.anapioficeandfire.com/api/houses');;
 
-    sentDataBook(preparar_books(json_books));
-    console.log("------------------------------------->------------------<-------------");
-    sendDataCharacters(preparar_characters(json_characters));
-    console.log(preparar_characters(json_characters))
-    console.log("------------------------------------->------------------<-------------");
-    sendDataHouses(preparar_houses(json_houses)); 
 }
 async function sentDataBook(arr_books){
-    const response = await fetch('http://host.docker.internal:9000/books', {
+    const response = await fetch('http://localhost:9000/books', {
     method: 'POST',
     body:JSON.stringify(arr_books), // string or object
     headers: {
@@ -91,10 +142,10 @@ async function sentDataBook(arr_books){
     } 
   });
   const resposta = await response;
-  console.log(response);
+  console.log("enviei");
 }
 async function sendDataHouses(arr_houses){
-    const response = await fetch('http://host.docker.internal:9000/houses', {
+    const response = await fetch('http://localhost:9000/houses', {
     method: 'POST',
     body:JSON.stringify(arr_houses), // string or object
     headers: {
@@ -103,7 +154,7 @@ async function sendDataHouses(arr_houses){
   });
 }
 async function sendDataCharacters(arr_characters){
-    const response = await fetch('http://host.docker.internal:9000/characters', {
+    const response = await fetch('http://localhost:9000/characters', {
     method: 'POST',
     body:JSON.stringify(arr_characters), // string or object
     headers: {
@@ -124,6 +175,42 @@ function extrai_idUrl(data){
         arr_id.push(element.split("/").pop())
     })
     return arr_id; 
+}
+
+function obtemEstatisticas(books,houses,charactrers){
+    var numeroLivros=books.length;
+    var livroComMaicharateres=ObtemLivroComMaisCharacters(books);
+    var numeroHouses=houses.length;
+    var numerocharacters=charactrers.length;
+    var numcharateresMasculino;
+    var numcharactersFeminino;
+}
+function ObtemLivroComMaisCharacters(books){
+    var numCharacter=books[0].characters.length;
+    var livro;
+    for(i=1;i<books.length;i++){
+        if(books[i].characters.length>numCharacter){
+            livro=books[i];
+            numCharacter=books[i].characters.length;
+        }
+    }
+    return books;
+}
+function ObtemCharateresMasculinos(characters){
+    var numMasc=0;
+    characters.forEach(function(element){
+        if(element.gender=="Male")
+        numMasc++;
+    })
+    return numMasc;
+}
+function ObtemCharateresFemininos(characters){
+    var numMasc=0;
+    characters.forEach(function(element){
+        if(element.gender=="Male")
+        numMasc++;
+    })
+    return numMasc;
 }
 /*----------------------------*/
 scrawlData();  
